@@ -46,8 +46,8 @@ locals {
 }
 
 resource "google_storage_bucket_object" "main" {
-  count   = local.rules_count
-  name    = element(local.files, count.index)
+  count = local.rules_count
+  name  = element(local.files, count.index)
   content = templatefile(
     "${path.module}/templates/${element(local.files, count.index)}",
     {
@@ -55,7 +55,7 @@ resource "google_storage_bucket_object" "main" {
       domain = var.domain
     }
   )
-  bucket  = var.server_gcs_module.forseti-server-storage-bucket
+  bucket = var.server_gcs_module.forseti-server-storage-bucket
 
   lifecycle {
     ignore_changes = [
@@ -69,7 +69,7 @@ resource "google_storage_bucket_object" "main" {
 // When `manage_rules_enabled` is set to false, by default, `rules/` dir won't be created.
 // This resource ensures empty `rules/` dir exists to allow Forseti service to start successfully.
 resource "google_storage_bucket_object" "empty_rules_dir" {
-  count   = ! var.manage_rules_enabled ? 1 : 0
+  count   = !var.manage_rules_enabled ? 1 : 0
   name    = "rules/"
   content = "n/a"
   bucket  = var.server_gcs_module.forseti-server-storage-bucket

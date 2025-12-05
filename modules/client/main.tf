@@ -62,7 +62,7 @@ resource "google_compute_instance" "forseti-client" {
   labels                    = var.client_labels
   allow_stopping_for_update = true
   metadata                  = var.client_instance_metadata
-  metadata_startup_script   = templatefile(
+  metadata_startup_script = templatefile(
     "${path.module}/templates/scripts/forseti-client/forseti_client_startup_script.sh.tpl",
     {
       forseti_environment = templatefile(
@@ -164,7 +164,7 @@ resource "google_compute_firewall" "forseti-client-deny-all" {
 }
 
 resource "google_compute_firewall" "forseti-client-ssh-external" {
-  count                   = var.client_enabled && var.manage_firewall_rules && ! var.client_private ? 1 : 0
+  count                   = var.client_enabled && var.manage_firewall_rules && !var.client_private ? 1 : 0
   name                    = "forseti-client-ssh-external-${var.suffix}"
   project                 = local.network_project
   network                 = var.network

@@ -51,8 +51,8 @@ resource "null_resource" "missing_emails" {
 #-------------------#
 
 resource "google_storage_bucket_object" "forseti_server_config" {
-  name    = "configs/forseti_conf_server.yaml"
-  bucket  = var.server_gcs_module.forseti-server-storage-bucket
+  name   = "configs/forseti_conf_server.yaml"
+  bucket = var.server_gcs_module.forseti-server-storage-bucket
   content = templatefile("${path.module}/templates/configs/forseti_conf_server.yaml.tpl", {
     RULES_PATH                                          = var.rules_path
     ROOT_RESOURCE_ID                                    = local.root_resource_id

@@ -27,9 +27,9 @@ locals {
 # Forseti templates #
 #-------------------#
 resource "google_storage_bucket_object" "forseti_client_config" {
-  count   = var.client_enabled ? 1 : 0
-  name    = "configs/forseti_conf_client.yaml"
-  bucket  = var.client_gcs_module.forseti-client-storage-bucket
+  count  = var.client_enabled ? 1 : 0
+  name   = "configs/forseti_conf_client.yaml"
+  bucket = var.client_gcs_module.forseti-client-storage-bucket
   content = templatefile("${path.module}/templates/configs/forseti_conf_client.yaml.tpl", {
     forseti_server_ip = var.server_address
   })

@@ -68,7 +68,7 @@ locals {
 # Forseti templates #
 #-------------------#
 resource "google_storage_bucket_object" "run_forseti_script" {
-  name    = "scripts/run_forseti.sh"
+  name = "scripts/run_forseti.sh"
   content = templatefile("${path.module}/templates/scripts/forseti-server/run_forseti.sh.tpl", {
     forseti_home                = var.forseti_home
     forseti_server_conf_path    = local.server_conf_path
@@ -84,11 +84,11 @@ resource "google_storage_bucket_object" "run_forseti_script" {
     cloudsql_db_user            = var.cloudsql_module.forseti-cloudsql-user
     cloudsql_instance_name      = var.cloudsql_module.forseti-cloudsql-instance-name
   })
-  bucket  = var.server_gcs_module.forseti-server-storage-bucket
+  bucket = var.server_gcs_module.forseti-server-storage-bucket
 }
 
 resource "google_storage_bucket_object" "initialize_forseti_services_script" {
-  name    = "scripts/initialize_forseti_services.sh"
+  name = "scripts/initialize_forseti_services.sh"
   content = templatefile("${path.module}/templates/scripts/forseti-server/initialize_forseti_services.sh.tpl", {
     cloudsql_connection_name         = var.cloudsql_module.forseti-cloudsql-connection-name
     cloudsql_db_name                 = var.cloudsql_module.forseti-cloudsql-db-name
@@ -105,7 +105,7 @@ resource "google_storage_bucket_object" "initialize_forseti_services_script" {
     policy_library_sync_enabled      = var.policy_library_sync_enabled
     policy_library_sync_git_sync_tag = var.policy_library_sync_git_sync_tag
   })
-  bucket  = var.server_gcs_module.forseti-server-storage-bucket
+  bucket = var.server_gcs_module.forseti-server-storage-bucket
 }
 
 #------------------------#
@@ -136,7 +136,7 @@ resource "google_compute_firewall" "forseti-server-deny-all" {
 }
 
 resource "google_compute_firewall" "forseti-server-ssh-external" {
-  count                   = var.manage_firewall_rules && ! var.server_private ? 1 : 0
+  count                   = var.manage_firewall_rules && !var.server_private ? 1 : 0
   name                    = "forseti-server-ssh-external-${local.random_hash}"
   project                 = local.network_project
   network                 = var.network
@@ -229,11 +229,11 @@ resource "google_compute_instance" "forseti-server" {
   labels                    = var.server_labels
   allow_stopping_for_update = true
   metadata                  = var.server_instance_metadata
-  metadata_startup_script   = templatefile("${path.module}/templates/scripts/forseti-server/forseti_server_startup_script.sh.tpl", {
-    cloudsql_proxy_arch                    = var.cloudsql_proxy_arch
-    cloud_profiler_enabled                 = var.cloud_profiler_enabled
-    forseti_conf_server_checksum           = base64sha256(var.server_config_module.forseti-server-config)
-    
+  metadata_startup_script = templatefile("${path.module}/templates/scripts/forseti-server/forseti_server_startup_script.sh.tpl", {
+    cloudsql_proxy_arch          = var.cloudsql_proxy_arch
+    cloud_profiler_enabled       = var.cloud_profiler_enabled
+    forseti_conf_server_checksum = base64sha256(var.server_config_module.forseti-server-config)
+
     forseti_env = templatefile("${path.module}/templates/scripts/forseti-server/forseti_env.sh.tpl", {
       project_id             = var.project_id
       cloudsql_db_name       = var.cloudsql_module.forseti-cloudsql-db-name
@@ -244,7 +244,7 @@ resource "google_compute_instance" "forseti-server" {
       cloudsql_db_password   = var.cloudsql_module.forseti-cloudsql-password
       forseti_scripts        = var.forseti_scripts
     })
-    
+
     forseti_environment = templatefile("${path.module}/templates/scripts/forseti-server/forseti_environment.sh.tpl", {
       forseti_home                     = var.forseti_home
       forseti_server_conf_path         = local.server_conf_path

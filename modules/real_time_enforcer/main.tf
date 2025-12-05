@@ -84,10 +84,10 @@ resource "google_organization_iam_member" "enforcer-writer" {
 #---------------------#
 
 resource "google_storage_bucket" "main" {
-  name               = local.enforcer_bucket_name
-  location           = var.storage_bucket_location
-  project            = var.project_id
-  force_destroy      = true
+  name                        = local.enforcer_bucket_name
+  location                    = var.storage_bucket_location
+  project                     = var.project_id
+  force_destroy               = true
   uniform_bucket_level_access = true
 }
 
