@@ -19,43 +19,39 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 3.52"
+      version = ">= 3.52, < 5.0"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
-      version = "~> 3.52"
+      version = ">= 3.52, < 5.0"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 0.10"
+      version = "~> 2.0"
     }
     http = {
       source  = "hashicorp/http"
-      version = "~> 1.2"
+      version = "~> 3.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 1.10"
+      version = "~> 2.0"
     }
     local = {
       source  = "hashicorp/local"
-      version = "~> 1.4"
+      version = "~> 2.0"
     }
     null = {
       source  = "hashicorp/null"
-      version = "~> 2.1"
+      version = "~> 3.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.1"
-    }
-    template = {
-      source  = "hashicorp/template"
-      version = "~> 2.1"
+      version = "~> 3.0"
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "~> 2.1"
+      version = "~> 3.0"
     }
   }
 }

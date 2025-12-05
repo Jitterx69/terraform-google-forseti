@@ -45,22 +45,16 @@ locals {
   rules_count = var.manage_rules_enabled ? length(local.files) : 0
 }
 
-data "template_file" "main" {
-  count = local.rules_count
-  template = file(
-    "${path.module}/templates/${element(local.files, count.index)}",
-  )
-
-  vars = {
-    org_id = var.org_id
-    domain = var.domain
-  }
-}
-
 resource "google_storage_bucket_object" "main" {
   count   = local.rules_count
   name    = element(local.files, count.index)
-  content = element(data.template_file.main.*.rendered, count.index)
+  content = templatefile(
+    "${path.module}/templates/${element(local.files, count.index)}",
+    {
+      org_id = var.org_id
+      domain = var.domain
+    }
+  )
   bucket  = var.server_gcs_module.forseti-server-storage-bucket
 
   lifecycle {

@@ -16,7 +16,7 @@
 
 output "forseti-server-config" {
   description = "The rendered Forseti server configuration file"
-  value       = data.template_file.forseti_server_config.rendered
+  value       = google_storage_bucket_object.forseti_server_config.content
 }
 
 output "forseti-server-config-md5" {

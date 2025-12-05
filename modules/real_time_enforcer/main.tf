@@ -88,7 +88,7 @@ resource "google_storage_bucket" "main" {
   location           = var.storage_bucket_location
   project            = var.project_id
   force_destroy      = true
-  bucket_policy_only = true
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_iam_member" "service_account_read" {
@@ -114,16 +114,6 @@ resource "google_storage_bucket_object" "enforcer_policy" {
 #-----------------------#
 # Enforcer GCE instance #
 #-----------------------#
-
-data "template_file" "cloud-init" {
-  template = file("${path.module}/templates/cloud-init.yml")
-
-  vars = {
-    project_id        = var.project_id
-    enforcer_bucket   = google_storage_bucket.main.name
-    subscription_name = google_pubsub_subscription.main.name
-  }
-}
 
 resource "google_compute_instance" "main" {
   name = local.enforcer_name
@@ -170,7 +160,11 @@ resource "google_compute_instance" "main" {
   metadata = merge(
     var.enforcer_instance_metadata,
     {
-      "user-data" = data.template_file.cloud-init.rendered
+      "user-data" = templatefile("${path.module}/templates/cloud-init.yml", {
+        project_id        = var.project_id
+        enforcer_bucket   = google_storage_bucket.main.name
+        subscription_name = google_pubsub_subscription.main.name
+      })
     },
   )
 

@@ -175,17 +175,10 @@ resource "null_resource" "wait_for_client" {
 #-------------------------#
 # Policy Library
 #-------------------------#
-data "template_file" "policy_library_files" {
-  count = length(local.policy_library_files)
-  template = file(
-    "${path.module}/${element(local.policy_library_files, count.index)}",
-  )
-}
-
 resource "google_storage_bucket_object" "main" {
   count   = length(local.policy_library_files)
   name    = element(local.policy_library_files, count.index)
-  content = element(data.template_file.policy_library_files.*.rendered, count.index)
+  content = templatefile("${path.module}/${element(local.policy_library_files, count.index)}", {})
   bucket  = module.forseti-install-simple.forseti-server-storage-bucket
 
   lifecycle {

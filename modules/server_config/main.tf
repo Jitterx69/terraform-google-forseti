@@ -50,14 +50,10 @@ resource "null_resource" "missing_emails" {
 # Forseti templates #
 #-------------------#
 
-data "template_file" "forseti_server_config" {
-  template = local.server_conf
-
-  # The variable casing and naming used here is used to match the
-  # upstream forseti templates more closely, reducing the amount
-  # of modifications needed to convert the Python templates into
-  # Terraform templates.
-  vars = {
+resource "google_storage_bucket_object" "forseti_server_config" {
+  name    = "configs/forseti_conf_server.yaml"
+  bucket  = var.server_gcs_module.forseti-server-storage-bucket
+  content = templatefile("${path.module}/templates/configs/forseti_conf_server.yaml.tpl", {
     RULES_PATH                                          = var.rules_path
     ROOT_RESOURCE_ID                                    = local.root_resource_id
     COMPOSITE_ROOT_RESOURCES                            = local.composite_root_resources
@@ -180,15 +176,5 @@ data "template_file" "forseti_server_config" {
     GROUPS_SETTINGS_DISABLE_POLLING          = var.groups_settings_disable_polling
     GROUPS_SETTINGS_ENABLED                  = var.groups_settings_enabled
     GROUPS_SETTINGS_VIOLATIONS_SHOULD_NOTIFY = var.groups_settings_violations_should_notify
-  }
-}
-
-#------------------------#
-# Forseti Storage bucket #
-#------------------------#
-
-resource "google_storage_bucket_object" "forseti_server_config" {
-  name    = "configs/forseti_conf_server.yaml"
-  bucket  = var.server_gcs_module.forseti-server-storage-bucket
-  content = data.template_file.forseti_server_config.rendered
+  })
 }

@@ -31,7 +31,7 @@ resource "google_storage_bucket" "client_config" {
   storage_class      = var.storage_bucket_class
   project            = var.project_id
   force_destroy      = true
-  bucket_policy_only = true
+  uniform_bucket_level_access = true
   labels             = var.gcs_labels
 
   depends_on = [null_resource.services-dependency]

@@ -16,5 +16,5 @@
 
 output "forseti-client-config" {
   description = "The rendered Forseti client configuration file"
-  value       = var.client_enabled ? data.template_file.forseti_client_config[0].rendered : null
+  value       = var.client_enabled ? google_storage_bucket_object.forseti_client_config[0].content : null
 }

@@ -52,34 +52,6 @@ locals {
 #-------------------#
 # Forseti templates #
 #-------------------#
-data "template_file" "forseti_client_startup_script" {
-  count    = var.client_enabled ? 1 : 0
-  template = local.client_startup_script
-
-  vars = {
-    forseti_environment      = data.template_file.forseti_client_environment[0].rendered
-    forseti_repo_url         = var.forseti_repo_url
-    forseti_version          = var.forseti_version
-    forseti_home             = var.forseti_home
-    forseti_client_conf_path = local.client_conf_path
-    google_cloud_sdk_version = var.google_cloud_sdk_version
-    storage_bucket_name      = var.client_gcs_module.forseti-client-storage-bucket
-  }
-}
-
-data "template_file" "forseti_client_environment" {
-  count    = var.client_enabled ? 1 : 0
-  template = local.client_env_script
-
-  vars = {
-    forseti_home             = var.forseti_home
-    forseti_client_conf_path = local.client_conf_path
-  }
-}
-
-#-------------------#
-# Forseti client VM #
-#-------------------#
 resource "google_compute_instance" "forseti-client" {
   count                     = var.client_enabled ? 1 : 0
   name                      = local.client_name
@@ -90,7 +62,24 @@ resource "google_compute_instance" "forseti-client" {
   labels                    = var.client_labels
   allow_stopping_for_update = true
   metadata                  = var.client_instance_metadata
-  metadata_startup_script   = data.template_file.forseti_client_startup_script[0].rendered
+  metadata_startup_script   = templatefile(
+    "${path.module}/templates/scripts/forseti-client/forseti_client_startup_script.sh.tpl",
+    {
+      forseti_environment = templatefile(
+        "${path.module}/templates/scripts/forseti-client/forseti_environment.sh.tpl",
+        {
+          forseti_home             = var.forseti_home
+          forseti_client_conf_path = local.client_conf_path
+        }
+      )
+      forseti_repo_url         = var.forseti_repo_url
+      forseti_version          = var.forseti_version
+      forseti_home             = var.forseti_home
+      forseti_client_conf_path = local.client_conf_path
+      google_cloud_sdk_version = var.google_cloud_sdk_version
+      storage_bucket_name      = var.client_gcs_module.forseti-client-storage-bucket
+    }
+  )
   dynamic "network_interface" {
     for_each = local.network_interface
     content {
